@@ -59,8 +59,9 @@
 		],
 		"extra": {
 			"eas": {
-				"projectId": "dc50b6f8-b0d5-4ce1-96ea-fa6fd5a09db2"
+				"projectId": "1f7d6632-0ffc-4669-a7dd-f0119aaeb135"
 			}
-		}
+		},
+		"owner": "nelsin_montana"
 	}
 }
