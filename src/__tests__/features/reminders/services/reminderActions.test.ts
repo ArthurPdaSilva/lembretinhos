@@ -1,6 +1,7 @@
 import { migrateDatabase } from "../../../../database/migrations/migrateDatabase";
 import { createReminderRepository } from "../../../../database/repositories/reminderRepository";
 import {
+	createReminder,
 	loadReminders,
 	setReminderCompleted,
 } from "../../../../features/reminders/services/reminderActions";
@@ -53,6 +54,35 @@ describe("reminderActions", () => {
 			completed: false,
 			completedAt: null,
 		});
+		database.close();
+	});
+});
+
+describe("createReminder", () => {
+	beforeEach(() =>
+		useReminderStore.setState({ reminders: [], isLoaded: true }),
+	);
+
+	it("salva no banco e adiciona na store", async () => {
+		const database = createSqliteDatabase();
+		await migrateDatabase(database);
+		const reminder = await createReminder(
+			database,
+			{ title: " Comprar pão ", date: "2026-11-27" },
+			new Date("2026-11-26T10:00:00.000Z"),
+		);
+
+		expect(reminder).toMatchObject({
+			title: "Comprar pão",
+			date: "2026-11-27",
+			completed: false,
+			createdAt: "2026-11-26T10:00:00.000Z",
+		});
+		expect(reminder.id).toMatch(/^[0-9a-f-]{36}$/);
+		expect(
+			await createReminderRepository(database).findById(reminder.id),
+		).toEqual(reminder);
+		expect(useReminderStore.getState().reminders).toEqual([reminder]);
 		database.close();
 	});
 });

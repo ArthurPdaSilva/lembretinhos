@@ -27,3 +27,11 @@ jest.mock("react-native-toast-message", () => {
 	Toast.show = jest.fn();
 	return { __esModule: true, default: Toast };
 });
+
+jest.mock("expo-crypto", () => ({
+	randomUUID: () => require("node:crypto").randomUUID(),
+}));
+
+jest.mock("@react-native-community/datetimepicker", () => ({
+	DateTimePickerAndroid: { open: jest.fn(), dismiss: jest.fn() },
+}));

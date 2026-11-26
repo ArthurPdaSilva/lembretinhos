@@ -1,4 +1,6 @@
 import { createReminderRepository } from "@/database/repositories/reminderRepository";
+import type { Reminder } from "@/types";
+import { createId } from "@/utils/id";
 import type { DatabaseConnection } from "@/database/types";
 import { useReminderStore } from "@/features/reminders/stores/ReminderStore";
 
@@ -23,4 +25,19 @@ export async function setReminderCompleted(
 	);
 	const updated = await repository.findById(id);
 	if (updated) useReminderStore.getState().upsertReminder(updated);
+}
+
+export async function createReminder(
+	database: DatabaseConnection,
+	input: { title: string; date: string },
+	now: Date = new Date(),
+): Promise<Reminder> {
+	const reminder = await createReminderRepository(database).create({
+		id: createId(),
+		title: input.title.trim(),
+		date: input.date,
+		createdAt: now.toISOString(),
+	});
+	useReminderStore.getState().upsertReminder(reminder);
+	return reminder;
 }

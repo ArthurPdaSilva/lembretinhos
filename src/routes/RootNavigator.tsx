@@ -6,11 +6,13 @@ import {
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useColorScheme } from "react-native";
+import { ReminderFormScreen } from "@/features/reminders/screens/ReminderFormScreen";
 import { ReminderListScreen } from "@/features/reminders/screens/ReminderListScreen";
 import { useThemeColors } from "@/styles/theme";
 
 export type RootStackParamList = {
 	ReminderList: undefined;
+	ReminderForm: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -46,6 +48,11 @@ export function RootNavigator() {
 					name="ReminderList"
 					component={ReminderListScreen}
 					options={{ title: "Lembretinhos", headerLargeTitle: true }}
+				/>
+				<Stack.Screen
+					name="ReminderForm"
+					component={ReminderFormScreen}
+					options={{ title: "Novo lembretinho" }}
 				/>
 			</Stack.Navigator>
 		</NavigationContainer>

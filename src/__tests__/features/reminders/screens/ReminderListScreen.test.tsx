@@ -10,8 +10,15 @@ import { createSqliteDatabase } from "../../../helpers/sqliteDatabase";
 
 let mockDatabase: ReturnType<typeof createSqliteDatabase>;
 
+const mockNavigate = jest.fn();
+
 jest.mock("expo-sqlite", () => ({
 	useSQLiteContext: () => mockDatabase,
+}));
+
+jest.mock("@react-navigation/native", () => ({
+	...jest.requireActual("@react-navigation/native"),
+	useNavigation: () => ({ navigate: mockNavigate }),
 }));
 
 async function seed() {
@@ -52,6 +59,12 @@ describe("ReminderListScreen", () => {
 	it("mostra o estado vazio", () => {
 		const { getByText } = render(<ReminderListScreen />);
 		expect(getByText("Nada para lembrar")).toBeTruthy();
+	});
+
+	it("abre o formulário pelo botão +", () => {
+		const { getByLabelText } = render(<ReminderListScreen />);
+		fireEvent.press(getByLabelText("Novo lembretinho"));
+		expect(mockNavigate).toHaveBeenCalledWith("ReminderForm");
 	});
 
 	it("separa pendentes e concluídos e marca os atrasados", async () => {

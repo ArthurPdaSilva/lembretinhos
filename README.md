@@ -39,7 +39,7 @@ Em planejamento. Etapas:
 - [x] Tema Post-it claro e escuro (segue o sistema) e componentes base: botão, campo de texto, diálogo de confirmação e toasts
 - [x] Banco `lembretinhos.db` com migration inicial e repository
 - [x] Store Zustand e tela de lista (pendentes, atrasados e concluídos), com concluir e reabrir pelo checkbox
-- [ ] Formulário de criação com validação
+- [x] Formulário de criação com validação (texto até 200 caracteres, data de hoje em diante, atalhos Hoje/Amanhã e calendário nativo)
 - [ ] Exclusão com confirmação
 - [ ] Agendador de notificações: permissão, de hora em hora, dias seguintes e limite de agendamentos
 - [ ] Ação "Concluído" direto na notificação

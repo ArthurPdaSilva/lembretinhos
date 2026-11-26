@@ -1,12 +1,15 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { type NavigationProp, useNavigation } from "@react-navigation/native";
 import { useSQLiteContext } from "expo-sqlite";
 import { useMemo } from "react";
 import { SectionList, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { notification } from "@/components/notifications";
+import { AddReminderButton } from "@/features/reminders/components/AddReminderButton";
 import { ReminderItem } from "@/features/reminders/components/ReminderItem";
 import { setReminderCompleted } from "@/features/reminders/services/reminderActions";
 import { useReminderStore } from "@/features/reminders/stores/ReminderStore";
+import type { RootStackParamList } from "@/routes/RootNavigator";
 import { useThemeColors } from "@/styles/theme";
 import { fontSize, fontWeight, spacing } from "@/styles/tokens";
 import type { Reminder } from "@/types";
@@ -14,6 +17,7 @@ import type { Reminder } from "@/types";
 export function ReminderListScreen() {
 	const themeColors = useThemeColors();
 	const insets = useSafeAreaInsets();
+	const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 	const database = useSQLiteContext();
 	const reminders = useReminderStore((state) => state.reminders);
 	const now = new Date();
@@ -86,6 +90,7 @@ export function ReminderListScreen() {
 					</View>
 				}
 			/>
+			<AddReminderButton onPress={() => navigation.navigate("ReminderForm")} />
 		</View>
 	);
 }
