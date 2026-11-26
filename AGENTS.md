@@ -176,7 +176,11 @@ As fontes vetoriais ficam em `assets/source/` e os PNGs são gerados a partir de
 ### Plataforma
 - Somente Android nesta etapa; não adicionar código, configuração ou dependências específicas de iOS
 - Suporte a iOS, se vier, será planejado numa etapa própria (o iOS limita a 64 notificações agendadas por app, o que muda o orçamento do agendador)
-- Builds pelo EAS ou locais com `npx expo run:android`
+- Builds pelo EAS (`eas.json`: perfis `development`, `preview` e `production`, conta `arthurpsilva`) ou locais com `npx expo run:android`
+- O release usa R8 (`android.enableMinifyInReleaseBuilds=true`). Classes criadas por reflexão precisam de regra `-keep` em `extraProguardRules` do `expo-build-properties` no `app.json`. Hoje existe a regra do WorkManager/Room (`expo-background-task`); sem ela o APK fecha ao abrir
+- `expo-system-ui` é necessário para o tema claro/escuro automático (`userInterfaceStyle: "automatic"`) funcionar no Android
+- Antes de um build, rodar `npx expo-doctor` e alinhar as versões com `npx expo install --fix`
+- Crash ao abrir no aparelho: ler com `adb logcat` (ver README)
 
 ## Testes (Jest + React Native Testing Library)
 

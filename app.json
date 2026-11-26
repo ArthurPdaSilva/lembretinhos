@@ -47,7 +47,20 @@
 			"expo-background-task",
 			"@react-native-community/datetimepicker",
 			"expo-font",
-			"expo-asset"
-		]
+			"expo-asset",
+			[
+				"expo-build-properties",
+				{
+					"android": {
+						"extraProguardRules": "# WorkManager (usado pelo expo-background-task) cria o banco Room por reflexão.\n-keep class * extends androidx.room.RoomDatabase { <init>(); }\n-keep class androidx.work.impl.WorkDatabase_Impl { *; }\n"
+					}
+				}
+			]
+		],
+		"extra": {
+			"eas": {
+				"projectId": "dc50b6f8-b0d5-4ce1-96ea-fa6fd5a09db2"
+			}
+		}
 	}
 }

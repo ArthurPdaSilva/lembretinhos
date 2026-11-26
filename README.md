@@ -110,11 +110,30 @@ Android local:
 npx expo run:android
 ```
 
-Development build pelo EAS:
+Ou gere o APK pelo EAS, na nuvem, sem precisar do Android SDK local (`eas.json`):
 
 ```bash
 eas build --profile development --platform android
 ```
+
+```bash
+eas build --profile preview --platform android
+```
+
+- `development`: o app com o `expo-dev-client`, para usar com `npx expo start` e recarregar ao editar o código.
+- `preview`: o app completo e independente, para usar no dia a dia ou mandar para alguém testar.
+
+### Ver erros no celular
+
+Com o celular ligado no USB (depuração USB ativada) e o `adb` instalado (`sudo dnf install android-tools`), dá para ler o log quando o app fecha sozinho:
+
+```bash
+adb logcat -v brief | grep -E "AndroidRuntime|ReactNativeJS"
+```
+
+### Otimização do APK (R8)
+
+O APK de release passa pelo R8, que remove código que parece não ser usado. O WorkManager (usado pelo `expo-background-task` para renovar os avisos em segundo plano) cria o banco interno dele por reflexão, e o R8 removia esse construtor: o app fechava ao abrir (`NoSuchMethodException: androidx.work.impl.WorkDatabase_Impl.<init>`). As regras que mantêm essas classes ficam no plugin `expo-build-properties` do `app.json` (`extraProguardRules`).
 
 O pacote Android é `com.arthurpsilva.lembretinhos`.
 
