@@ -73,7 +73,9 @@ CREATE TABLE reminder_notifications (
 );
 ```
 
-### Notificações (`features/reminders/services/notifications.ts`)
+### Notificações (`features/reminders/services/`)
+
+Arquivos: `notificationSlots.ts` (cálculo puro dos horários), `notificationService.ts` (canal, categoria, permissão e sincronização da fila), `notificationResponses.ts` (botão "Concluído"), `backgroundTasks.ts` (tarefas com o app fechado, definidas em `index.ts`) e `hooks/useReminderLifecycle.ts` (abertura, volta ao app e botão com o app aberto).
 - Notificações **locais** com `expo-notifications`; nada de push ou servidor
 - Horários: de hora em hora entre **08:00 e 22:00** (`NOTIFICATION_START_HOUR = 8`, `NOTIFICATION_END_HOUR = 22`), ou seja, 15 avisos por dia
 - Os avisos começam na data do lembrete e **continuam nos dias seguintes** até ele ser concluído ou excluído
@@ -85,7 +87,10 @@ CREATE TABLE reminder_notifications (
   - Se o usuário passar muitos dias sem abrir o app, os avisos podem acabar até a próxima abertura. Isso é uma limitação conhecida e documentada no README
 - O agendamento é **idempotente**: ele compara o que deveria estar agendado com o que está em `reminder_notifications` e só cancela o que sobra e agenda o que falta
 - Concluir ou excluir cancela os agendamentos do lembrete antes de qualquer outra coisa
-- Categoria de notificação com a ação **"Concluído"**, que marca o lembrete sem abrir o app
+- Categoria de notificação com a ação **"Concluído"**, que marca o lembrete sem abrir o app. Com o app fechado ou em segundo plano, quem trata é a tarefa `lembretinhos-notification-response` (`Notifications.registerTaskAsync`); com o app aberto, o listener de `useReminderLifecycle`
+- Ao concluir, os avisos já exibidos do lembrete saem da barra de notificações
+- Falhas ao agendar não desfazem a ação no banco: o lembrete continua salvo e a fila é refeita na próxima sincronização
+- Tarefas em segundo plano abrem o banco com `openMigratedDatabase()` (`@/database/openDatabase`), fora da árvore React
 - A permissão de notificação (`POST_NOTIFICATIONS`, Android 13+) é pedida na primeira criação de lembrete; se for negada, mostrar um toast `info` explicando
 - Canal próprio (`reminders`) com importância alta
 - Sem permissão de alarme exato, o Android pode atrasar os avisos alguns minutos (modo Doze). Isso é aceitável: não pedir `SCHEDULE_EXACT_ALARM` nem `USE_EXACT_ALARM` nesta etapa
@@ -178,7 +183,8 @@ As fontes vetoriais ficam em `assets/source/` e os PNGs são gerados a partir de
 - `jest-expo` preset
 - `render`, `fireEvent`, `waitFor` de `@testing-library/react-native`
 - Rodar com `npm test -- --runInBand`
-- `expo-notifications`, `expo-background-task` e `expo-sqlite` sempre mockados
+- `expo-notifications`, `expo-background-task`, `expo-task-manager`, `expo-crypto` e o date picker são mockados em `jest.setup.js`. O mock de notificações guarda os agendamentos em memória (`__scheduled`) e é zerado antes de cada teste (`jest.setupAfterEnv.js`)
+- O banco nos testes é um SQLite real em memória (`node:sqlite`) via `src/__tests__/helpers/sqliteDatabase.ts`; nas telas, mockar `useSQLiteContext` para devolvê-lo
 - Stores resetadas com `useXStore.setState()` no `beforeEach`
 - Imports **relativos** nos testes (não usar `@/`)
 - Arquivo: `{SourceName}.test.ts(x)` em `src/__tests__/`, espelhando a source (`src/features/reminders/services/notifications.ts` → `src/__tests__/features/reminders/services/notifications.test.ts`)

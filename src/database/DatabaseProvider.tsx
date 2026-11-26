@@ -2,11 +2,11 @@ import { SQLiteProvider, useSQLiteContext } from "expo-sqlite";
 import { type ReactNode, useEffect, useState } from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { migrateDatabase } from "@/database/migrations/migrateDatabase";
+import { DATABASE_NAME } from "@/database/openDatabase";
+import { useReminderLifecycle } from "@/features/reminders/hooks/useReminderLifecycle";
 import { loadReminders } from "@/features/reminders/services/reminderActions";
 import { useThemeColors } from "@/styles/theme";
 import { fontSize, spacing } from "@/styles/tokens";
-
-export const DATABASE_NAME = "lembretinhos.db";
 
 interface DatabaseProviderProps {
 	children: ReactNode;
@@ -17,6 +17,7 @@ export function DatabaseBootstrap({ children }: DatabaseProviderProps) {
 	const database = useSQLiteContext();
 	const [isReady, setIsReady] = useState(false);
 	const [hasError, setHasError] = useState(false);
+	useReminderLifecycle(database, isReady);
 
 	useEffect(() => {
 		let active = true;

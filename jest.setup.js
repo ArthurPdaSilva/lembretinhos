@@ -81,3 +81,13 @@ jest.mock("expo-notifications", () => {
 		registerTaskAsync: jest.fn(async () => null),
 	};
 });
+
+jest.mock("expo-task-manager", () => ({
+	defineTask: jest.fn(),
+	isTaskRegisteredAsync: jest.fn(async () => false),
+}));
+
+jest.mock("expo-background-task", () => ({
+	BackgroundTaskResult: { Success: 1, Failed: 2 },
+	registerTaskAsync: jest.fn(async () => undefined),
+}));

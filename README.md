@@ -30,7 +30,7 @@ Não dá para editar um lembretinho: para corrigir, exclua e crie de novo.
 
 ## Status
 
-Em planejamento. Etapas:
+Primeira versão implementada, falta testar num aparelho Android real. Etapas:
 
 - [x] Documentação inicial (AGENTS.md e README)
 - [x] Paleta de cores (Post-it)
@@ -42,9 +42,9 @@ Em planejamento. Etapas:
 - [x] Formulário de criação com validação (texto até 200 caracteres, data de hoje em diante, atalhos Hoje/Amanhã e calendário nativo)
 - [x] Exclusão com confirmação (ícone de lixeira em cada lembretinho)
 - [x] Agendador de notificações: permissão, de hora em hora, dias seguintes e limite de agendamentos (cria, conclui, reabre e exclui já ajustam a fila; avisos já exibidos somem da barra ao concluir)
-- [ ] Ação "Concluído" direto na notificação
-- [ ] Renovação da fila ao abrir o app e em segundo plano
-- [ ] Toasts em todas as ações
+- [x] Ação "Concluído" direto na notificação, com o app aberto, em segundo plano ou fechado
+- [x] Renovação da fila ao abrir o app, ao voltar para ele e em segundo plano (a cada 12h no mínimo, quando o Android permitir)
+- [x] Toasts em todas as ações
 - [ ] Teste em aparelho Android real (app fechado, reinicialização, economia de bateria)
 
 ## Stack
