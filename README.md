@@ -35,7 +35,7 @@ Em planejamento. Etapas:
 - [x] Documentação inicial (AGENTS.md e README)
 - [x] Paleta de cores (Post-it)
 - [x] Ícones do app (post-it com sino)
-- [ ] Setup: Expo, TypeScript, Biome, Jest e estrutura `src/`
+- [x] Setup: Expo SDK 58 (React Native 0.88), TypeScript, Biome, Jest e estrutura `src/`
 - [ ] Banco `lembretinhos.db` com migration inicial e repository
 - [ ] Store Zustand e tela de lista (pendentes, atrasados e concluídos)
 - [ ] Formulário de criação com validação
@@ -90,7 +90,7 @@ src/
 
 ## Requisitos
 
-- Node.js LTS
+- Node.js 22.13+ (linha 22), 24.3+ ou 26+, exigência do Expo SDK 58
 - npm
 - Expo/EAS CLI
 - Android Studio (emulador) ou um aparelho Android
@@ -115,10 +115,13 @@ Development build pelo EAS:
 eas build --profile development --platform android
 ```
 
+O pacote Android é `com.arthurpsilva.lembretinhos`.
+
 Comandos:
 
 ```bash
 npm start
+npm run android
 npm test
 npm run typecheck
 npm run lint

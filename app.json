@@ -1,0 +1,52 @@
+{
+	"expo": {
+		"name": "Lembretinhos",
+		"slug": "lembretinhos",
+		"scheme": "lembretinhos",
+		"version": "1.0.0",
+		"orientation": "portrait",
+		"icon": "./assets/icon.png",
+		"userInterfaceStyle": "automatic",
+		"platforms": ["android"],
+		"android": {
+			"package": "com.arthurpsilva.lembretinhos",
+			"softwareKeyboardLayoutMode": "resize",
+			"adaptiveIcon": {
+				"foregroundImage": "./assets/adaptive-icon.png",
+				"monochromeImage": "./assets/monochrome-icon.png",
+				"backgroundColor": "#FFFBF0"
+			},
+			"permissions": [
+				"android.permission.POST_NOTIFICATIONS",
+				"android.permission.RECEIVE_BOOT_COMPLETED"
+			]
+		},
+		"plugins": [
+			"expo-status-bar",
+			[
+				"expo-splash-screen",
+				{
+					"image": "./assets/splash-icon.png",
+					"imageWidth": 200,
+					"resizeMode": "contain",
+					"backgroundColor": "#FFFBF0",
+					"dark": {
+						"backgroundColor": "#17140E"
+					}
+				}
+			],
+			"expo-sqlite",
+			[
+				"expo-notifications",
+				{
+					"icon": "./assets/notification-icon.png",
+					"color": "#F2A900",
+					"defaultChannel": "reminders"
+				}
+			],
+			"expo-background-task",
+			"@react-native-community/datetimepicker",
+			"expo-font"
+		]
+	}
+}
