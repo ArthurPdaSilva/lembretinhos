@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+<defs><mask id="m"><path d="M268 232 h488 a36 36 0 0 1 36 36 v380 l-144 144 h-380 a36 36 0 0 1 -36 -36 v-488 a36 36 0 0 1 36 -36z" fill="#fff"/><path d="M792 648 l-144 144 v-108 a36 36 0 0 1 36 -36z" fill="#000"/>
+<path d="M792 648 l-144 144 v-108 a36 36 0 0 1 36 -36z" fill="none" stroke="#000" stroke-width="28"/>
+<circle cx="512" cy="360" r="20" fill="#000"/><path d="M512 372 c-74 0 -122 54 -122 126 v66 l-38 48 h320 l-38 -48 v-66 c0 -72 -48 -126 -122 -126z" fill="#000"/><circle cx="512" cy="640" r="28" fill="#000"/></mask></defs>
+<g transform="translate(512 512) scale(1.05) translate(-512 -512) rotate(-6 512 512)">
+<rect width="1024" height="1024" fill="#fff" mask="url(#m)"/>
+</g></svg>

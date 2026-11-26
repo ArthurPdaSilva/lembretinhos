@@ -1,0 +1,45 @@
+# Dependências
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Builds nativos (gerados por prebuild / expo run)
+android/
+ios/
+*.apk
+*.aab
+*.keystore
+*.jks
+!debug.keystore
+
+# Metro
+.metro-health-check*
+
+# Testes
+coverage/
+
+# Variáveis de ambiente
+.env
+.env*.local
+
+# TypeScript
+*.tsbuildinfo
+
+# Logs
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+*.log
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Editor e Claude local
+.vscode/
+.idea/
+.claude/settings.local.json
