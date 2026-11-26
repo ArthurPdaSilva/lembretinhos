@@ -37,7 +37,7 @@ Em planejamento. Etapas:
 - [x] Ícones do app (post-it com sino)
 - [x] Setup: Expo SDK 58 (React Native 0.88), TypeScript, Biome, Jest e estrutura `src/`
 - [x] Tema Post-it claro e escuro (segue o sistema) e componentes base: botão, campo de texto, diálogo de confirmação e toasts
-- [ ] Banco `lembretinhos.db` com migration inicial e repository
+- [x] Banco `lembretinhos.db` com migration inicial e repository
 - [ ] Store Zustand e tela de lista (pendentes, atrasados e concluídos)
 - [ ] Formulário de criação com validação
 - [ ] Exclusão com confirmação
