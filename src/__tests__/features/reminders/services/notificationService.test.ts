@@ -48,6 +48,19 @@ describe("notificationService", () => {
 		);
 	});
 
+	it("registra o botão Concluído mesmo se o canal falhar", async () => {
+		mocked.setNotificationChannelAsync.mockRejectedValueOnce(
+			new Error("canal falhou"),
+		);
+		await expect(configureNotifications()).rejects.toThrow(
+			"Falha ao configurar as notificações",
+		);
+		expect(mocked.setNotificationCategoryAsync).toHaveBeenCalledWith(
+			"reminder",
+			expect.any(Array),
+		);
+	});
+
 	it("agenda os avisos do lembretinho e guarda os ids", async () => {
 		const { database, repository } = await setup();
 		await syncNotifications(database, NOW);

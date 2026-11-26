@@ -7,6 +7,11 @@ export const REMINDER_CHANNEL_ID = "reminders";
 export const REMINDER_CATEGORY_ID = "reminder";
 export const COMPLETE_ACTION_ID = "complete";
 
+/**
+ * Prepara handler, canal e botão "Concluído". Cada passo é independente: se um
+ * falhar (ex.: o canal no Expo Go), os outros continuam valendo. Os erros são
+ * repassados juntos no fim, para quem chamou registrar.
+ */
 export async function configureNotifications(): Promise<void> {
 	Notifications.setNotificationHandler({
 		handleNotification: async () => ({
@@ -16,20 +21,30 @@ export async function configureNotifications(): Promise<void> {
 			shouldSetBadge: false,
 		}),
 	});
-	await Notifications.setNotificationChannelAsync(REMINDER_CHANNEL_ID, {
-		name: "Lembretinhos",
-		description: "Avisos de hora em hora dos lembretinhos pendentes",
-		importance: Notifications.AndroidImportance.HIGH,
-		lightColor: "#F2A900",
-		vibrationPattern: [0, 250, 150, 250],
-	});
-	await Notifications.setNotificationCategoryAsync(REMINDER_CATEGORY_ID, [
-		{
-			identifier: COMPLETE_ACTION_ID,
-			buttonTitle: "Concluído",
-			options: { opensAppToForeground: false },
-		},
+	const results = await Promise.allSettled([
+		Notifications.setNotificationChannelAsync(REMINDER_CHANNEL_ID, {
+			name: "Lembretinhos",
+			description: "Avisos de hora em hora dos lembretinhos pendentes",
+			importance: Notifications.AndroidImportance.HIGH,
+			lightColor: "#F2A900",
+			vibrationPattern: [0, 250, 150, 250],
+		}),
+		Notifications.setNotificationCategoryAsync(REMINDER_CATEGORY_ID, [
+			{
+				identifier: COMPLETE_ACTION_ID,
+				buttonTitle: "Concluído",
+				options: { opensAppToForeground: false },
+			},
+		]),
 	]);
+	const errors = results
+		.filter((result) => result.status === "rejected")
+		.map((result) => String(result.reason));
+	if (errors.length > 0) {
+		throw new Error(
+			`Falha ao configurar as notificações: ${errors.join("; ")}`,
+		);
+	}
 }
 
 export async function hasNotificationPermission(): Promise<boolean> {

@@ -53,6 +53,20 @@ describe("useReminderLifecycle", () => {
 		expect(Notifications.registerTaskAsync).toHaveBeenCalled();
 	});
 
+	it("agenda os avisos mesmo se o canal falhar", async () => {
+		const warn = jest
+			.spyOn(console, "warn")
+			.mockImplementation(() => undefined);
+		(
+			Notifications.setNotificationChannelAsync as jest.Mock
+		).mockRejectedValueOnce(new Error("canal falhou"));
+		renderHook(() => useReminderLifecycle(database, true));
+		await waitFor(() =>
+			expect(Notifications.scheduleNotificationAsync).toHaveBeenCalled(),
+		);
+		expect(warn).toHaveBeenCalled();
+	});
+
 	it("recarrega a lista ao voltar para o app", async () => {
 		renderHook(() => useReminderLifecycle(database, true));
 		await createReminderRepository(database).setCompleted(

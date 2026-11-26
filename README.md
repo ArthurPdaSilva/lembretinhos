@@ -123,6 +123,20 @@ eas build --profile preview --platform android
 - `development`: o app com o `expo-dev-client`, para usar com `npx expo start` e recarregar ao editar o código.
 - `preview`: o app completo e independente, para usar no dia a dia ou mandar para alguém testar.
 
+### Testar pelo cabo, sem gerar APK
+
+Com o celular no USB, o Expo Go (ou o development build) conecta pelo cabo, sem depender do Wi-Fi ou do túnel:
+
+```bash
+adb reverse tcp:8081 tcp:8081
+```
+
+```bash
+npx expo start --go --localhost
+```
+
+No Expo Go dá para testar telas, criar, concluir e excluir. O canal de notificação falha lá (limitação do Expo Go) e as tarefas em segundo plano não rodam, mas o app segue: cada passo da configuração dos avisos é independente, e a fila é montada mesmo se um deles falhar.
+
 ### Ver erros no celular
 
 Com o celular ligado no USB (depuração USB ativada) e o `adb` instalado (`sudo dnf install android-tools`), dá para ler o log quando o app fecha sozinho:

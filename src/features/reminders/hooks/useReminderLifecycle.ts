@@ -26,7 +26,9 @@ export function useReminderLifecycle(
 	useEffect(() => {
 		if (!enabled) return;
 
+		// Mesmo se a configuração falhar em parte, a fila de avisos é montada.
 		configureNotifications()
+			.catch(warn)
 			.then(() => syncNotifications(database))
 			.catch(warn);
 		registerBackgroundTasks().catch(warn);
