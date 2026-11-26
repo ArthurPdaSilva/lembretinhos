@@ -41,3 +41,11 @@ export async function createReminder(
 	useReminderStore.getState().upsertReminder(reminder);
 	return reminder;
 }
+
+export async function deleteReminder(
+	database: DatabaseConnection,
+	id: string,
+): Promise<void> {
+	await createReminderRepository(database).remove(id);
+	useReminderStore.getState().removeReminder(id);
+}

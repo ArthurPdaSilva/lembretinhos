@@ -1,13 +1,17 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { type NavigationProp, useNavigation } from "@react-navigation/native";
 import { useSQLiteContext } from "expo-sqlite";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { SectionList, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { ConfirmModal } from "@/components/ConfirmModal";
 import { notification } from "@/components/notifications";
 import { AddReminderButton } from "@/features/reminders/components/AddReminderButton";
 import { ReminderItem } from "@/features/reminders/components/ReminderItem";
-import { setReminderCompleted } from "@/features/reminders/services/reminderActions";
+import {
+	deleteReminder,
+	setReminderCompleted,
+} from "@/features/reminders/services/reminderActions";
 import { useReminderStore } from "@/features/reminders/stores/ReminderStore";
 import type { RootStackParamList } from "@/routes/RootNavigator";
 import { useThemeColors } from "@/styles/theme";
@@ -20,6 +24,9 @@ export function ReminderListScreen() {
 	const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 	const database = useSQLiteContext();
 	const reminders = useReminderStore((state) => state.reminders);
+	const [reminderToDelete, setReminderToDelete] = useState<Reminder | null>(
+		null,
+	);
 	const now = new Date();
 
 	const sections = useMemo(() => {
@@ -41,6 +48,20 @@ export function ReminderListScreen() {
 		} catch {
 			notification.error(
 				"Não foi possível atualizar o lembretinho. Tente de novo.",
+			);
+		}
+	}
+
+	async function handleConfirmDelete() {
+		const reminder = reminderToDelete;
+		setReminderToDelete(null);
+		if (!reminder) return;
+		try {
+			await deleteReminder(database, reminder.id);
+			notification.success("Lembretinho excluído.");
+		} catch {
+			notification.error(
+				"Não foi possível excluir o lembretinho. Tente de novo.",
 			);
 		}
 	}
@@ -67,7 +88,12 @@ export function ReminderListScreen() {
 					</Text>
 				)}
 				renderItem={({ item }) => (
-					<ReminderItem reminder={item} now={now} onToggle={handleToggle} />
+					<ReminderItem
+						reminder={item}
+						now={now}
+						onToggle={handleToggle}
+						onDelete={setReminderToDelete}
+					/>
 				)}
 				ItemSeparatorComponent={() => <View style={styles.separator} />}
 				ListEmptyComponent={
@@ -89,6 +115,13 @@ export function ReminderListScreen() {
 						</Text>
 					</View>
 				}
+			/>
+			<ConfirmModal
+				visible={reminderToDelete !== null}
+				title="Excluir lembretinho?"
+				message={`"${reminderToDelete?.title ?? ""}" será apagado e os avisos dele serão cancelados.`}
+				onConfirm={handleConfirmDelete}
+				onCancel={() => setReminderToDelete(null)}
 			/>
 			<AddReminderButton onPress={() => navigation.navigate("ReminderForm")} />
 		</View>

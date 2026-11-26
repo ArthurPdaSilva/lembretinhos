@@ -40,7 +40,7 @@ Em planejamento. Etapas:
 - [x] Banco `lembretinhos.db` com migration inicial e repository
 - [x] Store Zustand e tela de lista (pendentes, atrasados e concluídos), com concluir e reabrir pelo checkbox
 - [x] Formulário de criação com validação (texto até 200 caracteres, data de hoje em diante, atalhos Hoje/Amanhã e calendário nativo)
-- [ ] Exclusão com confirmação
+- [x] Exclusão com confirmação (ícone de lixeira em cada lembretinho)
 - [ ] Agendador de notificações: permissão, de hora em hora, dias seguintes e limite de agendamentos
 - [ ] Ação "Concluído" direto na notificação
 - [ ] Renovação da fila ao abrir o app e em segundo plano

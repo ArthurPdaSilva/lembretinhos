@@ -118,4 +118,53 @@ describe("ReminderListScreen", () => {
 		);
 		mockDatabase = createSqliteDatabase();
 	});
+
+	it("exclui depois de confirmar e mostra o toast", async () => {
+		await seed();
+		const { getByLabelText, getByRole, getByText, queryByText } = render(
+			<ReminderListScreen />,
+		);
+		fireEvent.press(getByLabelText("Excluir Comprar pão"));
+		expect(getByText("Excluir lembretinho?")).toBeTruthy();
+		fireEvent.press(getByRole("button", { name: "Excluir" }));
+
+		await waitFor(() =>
+			expect(Toast.show).toHaveBeenCalledWith(
+				expect.objectContaining({
+					type: "success",
+					text2: "Lembretinho excluído.",
+				}),
+			),
+		);
+		expect(queryByText("Comprar pão")).toBeNull();
+		expect(
+			await createReminderRepository(mockDatabase).findById("done"),
+		).toBeNull();
+	});
+
+	it("não exclui ao cancelar", async () => {
+		await seed();
+		const { getByLabelText, getByRole, getByText } = render(
+			<ReminderListScreen />,
+		);
+		fireEvent.press(getByLabelText("Excluir Comprar pão"));
+		fireEvent.press(getByRole("button", { name: "Cancelar" }));
+
+		expect(getByText("Comprar pão")).toBeTruthy();
+		expect(Toast.show).not.toHaveBeenCalled();
+	});
+
+	it("mostra toast de erro quando não consegue excluir", async () => {
+		await seed();
+		const { getByLabelText, getByRole } = render(<ReminderListScreen />);
+		fireEvent.press(getByLabelText("Excluir Comprar pão"));
+		mockDatabase.close();
+		fireEvent.press(getByRole("button", { name: "Excluir" }));
+		await waitFor(() =>
+			expect(Toast.show).toHaveBeenCalledWith(
+				expect.objectContaining({ type: "error" }),
+			),
+		);
+		mockDatabase = createSqliteDatabase();
+	});
 });

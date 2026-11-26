@@ -2,6 +2,7 @@ import { migrateDatabase } from "../../../../database/migrations/migrateDatabase
 import { createReminderRepository } from "../../../../database/repositories/reminderRepository";
 import {
 	createReminder,
+	deleteReminder,
 	loadReminders,
 	setReminderCompleted,
 } from "../../../../features/reminders/services/reminderActions";
@@ -83,6 +84,28 @@ describe("createReminder", () => {
 			await createReminderRepository(database).findById(reminder.id),
 		).toEqual(reminder);
 		expect(useReminderStore.getState().reminders).toEqual([reminder]);
+		database.close();
+	});
+});
+
+describe("deleteReminder", () => {
+	beforeEach(() =>
+		useReminderStore.setState({ reminders: [], isLoaded: true }),
+	);
+
+	it("apaga do banco e da store", async () => {
+		const database = createSqliteDatabase();
+		await migrateDatabase(database);
+		const reminder = await createReminder(database, {
+			title: "Teste",
+			date: "2026-11-27",
+		});
+
+		await deleteReminder(database, reminder.id);
+		expect(
+			await createReminderRepository(database).findById(reminder.id),
+		).toBeNull();
+		expect(useReminderStore.getState().reminders).toHaveLength(0);
 		database.close();
 	});
 });

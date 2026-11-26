@@ -9,9 +9,15 @@ interface ReminderItemProps {
 	reminder: Reminder;
 	now: Date;
 	onToggle: (reminder: Reminder) => void;
+	onDelete: (reminder: Reminder) => void;
 }
 
-export function ReminderItem({ reminder, now, onToggle }: ReminderItemProps) {
+export function ReminderItem({
+	reminder,
+	now,
+	onToggle,
+	onDelete,
+}: ReminderItemProps) {
 	const themeColors = useThemeColors();
 	const overdue = !reminder.completed && isOverdue(reminder.date, now);
 	const dateLabel = formatReminderDate(reminder.date, now);
@@ -96,6 +102,19 @@ export function ReminderItem({ reminder, now, onToggle }: ReminderItemProps) {
 					) : null}
 				</View>
 			</View>
+			<Pressable
+				accessibilityRole="button"
+				accessibilityLabel={`Excluir ${reminder.title}`}
+				hitSlop={10}
+				onPress={() => onDelete(reminder)}
+				style={styles.delete}
+			>
+				<MaterialCommunityIcons
+					name="trash-can-outline"
+					size={22}
+					color={themeColors.textMuted}
+				/>
+			</Pressable>
 		</View>
 	);
 }
@@ -130,4 +149,5 @@ const styles = StyleSheet.create({
 		borderRadius: borderRadius.pill,
 	},
 	badgeText: { fontSize: 11, fontWeight: fontWeight.bold },
+	delete: { paddingTop: 2 },
 });
