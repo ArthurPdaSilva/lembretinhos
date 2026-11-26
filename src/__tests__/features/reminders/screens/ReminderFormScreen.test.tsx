@@ -1,3 +1,4 @@
+import * as Notifications from "expo-notifications";
 import { fireEvent, render, waitFor } from "@testing-library/react-native";
 import Toast from "react-native-toast-message";
 import { migrateDatabase } from "../../../../database/migrations/migrateDatabase";
@@ -74,5 +75,27 @@ describe("ReminderFormScreen", () => {
 		);
 		expect(mockGoBack).not.toHaveBeenCalled();
 		mockDatabase = createSqliteDatabase();
+	});
+
+	it("avisa quando as notificações estão desativadas", async () => {
+		(Notifications.getPermissionsAsync as jest.Mock).mockResolvedValue({
+			granted: false,
+			canAskAgain: false,
+		});
+		const { getByLabelText, getByRole } = render(<ReminderFormScreen />);
+		fireEvent.changeText(getByLabelText("O que lembrar"), "Teste");
+		fireEvent.press(getByRole("button", { name: "Salvar lembretinho" }));
+
+		await waitFor(() => expect(mockGoBack).toHaveBeenCalled());
+		expect(Toast.show).toHaveBeenCalledWith(
+			expect.objectContaining({
+				type: "info",
+				text2: expect.stringContaining("notificações estão desativadas"),
+			}),
+		);
+		(Notifications.getPermissionsAsync as jest.Mock).mockResolvedValue({
+			granted: true,
+			canAskAgain: true,
+		});
 	});
 });

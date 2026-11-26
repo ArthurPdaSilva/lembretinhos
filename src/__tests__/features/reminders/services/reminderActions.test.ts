@@ -1,3 +1,4 @@
+import * as Notifications from "expo-notifications";
 import { migrateDatabase } from "../../../../database/migrations/migrateDatabase";
 import { createReminderRepository } from "../../../../database/repositories/reminderRepository";
 import {
@@ -106,6 +107,60 @@ describe("deleteReminder", () => {
 			await createReminderRepository(database).findById(reminder.id),
 		).toBeNull();
 		expect(useReminderStore.getState().reminders).toHaveLength(0);
+		database.close();
+	});
+});
+
+describe("avisos nas ações", () => {
+	const scheduled = (
+		Notifications as unknown as { __scheduled: Map<string, unknown> }
+	).__scheduled;
+
+	beforeEach(() =>
+		useReminderStore.setState({ reminders: [], isLoaded: true }),
+	);
+
+	it("criar agenda, concluir cancela, reabrir agenda de novo e excluir cancela", async () => {
+		const database = createSqliteDatabase();
+		await migrateDatabase(database);
+		const reminder = await createReminder(database, {
+			title: "Teste",
+			date: "2026-11-27",
+		});
+		expect(scheduled.size).toBeGreaterThan(0);
+
+		await setReminderCompleted(database, reminder.id, true);
+		expect(scheduled.size).toBe(0);
+
+		await setReminderCompleted(database, reminder.id, false);
+		expect(scheduled.size).toBeGreaterThan(0);
+
+		await deleteReminder(database, reminder.id);
+		expect(scheduled.size).toBe(0);
+		expect(
+			await createReminderRepository(database).listNotifications(),
+		).toEqual([]);
+		database.close();
+	});
+
+	it("salva mesmo se o agendamento falhar", async () => {
+		const database = createSqliteDatabase();
+		await migrateDatabase(database);
+		const warn = jest
+			.spyOn(console, "warn")
+			.mockImplementation(() => undefined);
+		(
+			Notifications.getAllScheduledNotificationsAsync as jest.Mock
+		).mockRejectedValueOnce(new Error("falhou"));
+		const reminder = await createReminder(database, {
+			title: "Teste",
+			date: "2026-11-27",
+		});
+		expect(
+			await createReminderRepository(database).findById(reminder.id),
+		).not.toBeNull();
+		expect(warn).toHaveBeenCalled();
+		warn.mockRestore();
 		database.close();
 	});
 });

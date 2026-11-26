@@ -18,6 +18,7 @@ import {
 	type ReminderFormValues,
 	reminderSchema,
 } from "@/features/reminders/schemas/reminderSchema";
+import { ensureNotificationPermission } from "@/features/reminders/services/notificationService";
 import { createReminder } from "@/features/reminders/services/reminderActions";
 import { useThemeColors } from "@/styles/theme";
 import { fontSize, spacing } from "@/styles/tokens";
@@ -40,8 +41,15 @@ export function ReminderFormScreen() {
 
 	const onSubmit = handleSubmit(async (values) => {
 		try {
+			const canNotify = await ensureNotificationPermission().catch(() => false);
 			await createReminder(database, values);
-			notification.success("Lembretinho criado.");
+			if (canNotify) {
+				notification.success("Lembretinho criado.");
+			} else {
+				notification.info(
+					"Lembretinho criado, mas as notificações estão desativadas. Ative nos ajustes do celular para receber os avisos.",
+				);
+			}
 			navigation.goBack();
 		} catch {
 			notification.error(

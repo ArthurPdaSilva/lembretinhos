@@ -2,6 +2,11 @@ import { createReminderRepository } from "@/database/repositories/reminderReposi
 import type { Reminder } from "@/types";
 import { createId } from "@/utils/id";
 import type { DatabaseConnection } from "@/database/types";
+import {
+	cancelReminderNotifications,
+	dismissPresentedReminderNotifications,
+	syncNotifications,
+} from "@/features/reminders/services/notificationService";
 import { useReminderStore } from "@/features/reminders/stores/ReminderStore";
 
 export async function loadReminders(
@@ -25,6 +30,8 @@ export async function setReminderCompleted(
 	);
 	const updated = await repository.findById(id);
 	if (updated) useReminderStore.getState().upsertReminder(updated);
+	if (completed) await safely(() => dismissPresentedReminderNotifications(id));
+	await safely(() => syncNotifications(database, now));
 }
 
 export async function createReminder(
@@ -39,6 +46,7 @@ export async function createReminder(
 		createdAt: now.toISOString(),
 	});
 	useReminderStore.getState().upsertReminder(reminder);
+	await safely(() => syncNotifications(database, now));
 	return reminder;
 }
 
@@ -46,6 +54,19 @@ export async function deleteReminder(
 	database: DatabaseConnection,
 	id: string,
 ): Promise<void> {
+	await safely(() => cancelReminderNotifications(database, id));
 	await createReminderRepository(database).remove(id);
 	useReminderStore.getState().removeReminder(id);
+}
+
+/**
+ * Falhas nos avisos não desfazem a ação no banco: o lembretinho continua salvo
+ * e a fila é refeita na próxima sincronização (abrir o app, criar, concluir...).
+ */
+async function safely(task: () => Promise<void>): Promise<void> {
+	try {
+		await task();
+	} catch (error) {
+		console.warn("Falha ao sincronizar os avisos", error);
+	}
 }
