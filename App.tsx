@@ -1,15 +1,18 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
+import { toastConfig } from "@/components/notifications";
+import { DatabaseProvider } from "@/database/DatabaseProvider";
+import { RootNavigator } from "@/routes/RootNavigator";
 
 export function App() {
 	return (
-		<View style={styles.container}>
-			<Text>Lembretinhos</Text>
+		<SafeAreaProvider>
+			<DatabaseProvider>
+				<RootNavigator />
+			</DatabaseProvider>
 			<StatusBar style="auto" />
-		</View>
+			<Toast config={toastConfig} />
+		</SafeAreaProvider>
 	);
 }
-
-const styles = StyleSheet.create({
-	container: { flex: 1, alignItems: "center", justifyContent: "center" },
-});
